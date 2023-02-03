@@ -5,6 +5,8 @@
 
 section .data
 	perg db "Numero: ", 10
+    fmt: db "%d", 10, 0
+    return db "1", 10
     cr db 0, 10
 
 section .bss
@@ -12,10 +14,12 @@ section .bss
     saida resb 8
 
 section .text
-	global _start
+    default rel
+    extern printf
+	global main
 
-_start:
-
+main:
+    
     call _printPergunta
     call _setNumero
     call _fatorial
@@ -46,6 +50,15 @@ _fatorial:
     mov rax, [entrada]
     sub rax, 30h
     mov rcx, rax
+
+    ; cmp rcx, 1
+    ; cmp rcx, 0
+    ; jz _return
+    ; ret
+
+    ; jnz continua
+    ; continua:
+
     dec rcx
     laco:
         mul rcx
@@ -54,17 +67,25 @@ _fatorial:
     ret
 
 _printResultado:
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, saida
-    mov rdx, 9
-    syscall
+    mov rax, 0
+    mov rdi, fmt
+    mov rsi, [saida]
+    call printf wrt ..plt
     ret
 
 _carriageReturn:
     mov rax, 1
     mov rdi, 1
     mov rsi, cr
+    mov rdx, 2
+    syscall
+    ret
+
+
+_return:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, return
     mov rdx, 2
     syscall
     ret
